@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On approche de l'Halloween - Semaine 7</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Lora:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Styles globaux pour garantir une apparence "Édition Scolaire" */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #2D0A31 0%, #16021A 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Conteneur principal 16:9 */
+        #app-container {
+            width: 100%;
+            max-width: 1200px;
+            aspect-ratio: 16 / 9;
+            background-color: #F8F9FA;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            color: #1F2937;
+        }
+
+        @media (max-width: 1024px) {
+            #app-container {
+                aspect-ratio: auto;
+                min-height: 90vh;
+                border-radius: 1rem;
+            }
+        }
+
+        /* Typographie spécifique */
+        .font-serif-dict { font-family: 'Lora', serif; }
+        
+        /* Boutons 3D interactifs (Adaptés TNI) */
+        .btn-3d {
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0px 0px rgba(0,0,0,0.2);
+        }
+        .btn-3d:active {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0px 0px rgba(0,0,0,0.2);
+        }
+
+        .btn-reveal {
+            background: linear-gradient(to right, #F97316, #EA580C);
+            box-shadow: 0 6px 0px #C2410C, 0 10px 15px -3px rgba(0,0,0,0.3);
+        }
+        .btn-reveal:active {
+            box-shadow: 0 0px 0px #C2410C, 0 4px 6px -2px rgba(0,0,0,0.2);
+        }
+
+        /* Animations */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            80% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        @keyframes slideUpFade {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up { animation: slideUpFade 0.4s ease-out forwards; }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        .animate-wiggle { animation: wiggle 2s ease-in-out infinite; }
+
+        /* Bulles de dialogue */
+        .bubble-left {
+            position: relative;
+            background: #E0E7FF;
+            border-radius: 1rem;
+            border-bottom-left-radius: 0;
+        }
+        .bubble-right {
+            position: relative;
+            background: #FFEDD5;
+            border-radius: 1rem;
+            border-bottom-right-radius: 0;
+        }
+        
+        /* Onglets */
+        .tab-active {
+            background-color: #F97316;
+            color: white;
+            border-color: #C2410C;
+            transform: scale(1.1);
+            font-weight: bold;
+        }
+        .tab-inactive {
+            background-color: #E5E7EB;
+            color: #6B7280;
+            border-color: #D1D5DB;
+        }
+        .tab-inactive:hover { background-color: #D1D5DB; }
+
+        /* Conteneur de l'image pour effets */
+        .image-container svg {
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div id="app-container">
+        
+        <!-- HEADER -->
+        <header class="bg-indigo-900 text-white p-4 flex justify-between items-center shadow-md shrink-0">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black uppercase tracking-wider text-orange-400">On approche de l'Halloween</h1>
+                <h2 class="text-lg md:text-xl font-bold opacity-80">Semaine 7</h2>
+            </div>
+            <div class="hidden md:flex items-center gap-2">
+                <span class="bg-indigo-800 px-4 py-2 rounded-full font-bold text-sm tracking-wide border border-indigo-700">2e CYCLE DU PRIMAIRE</span>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 flex flex-col md:flex-row overflow-hidden bg-white">
+            
+            <!-- SECTION VISUELLE (GAUCHE) -->
+            <section class="md:w-5/12 bg-indigo-50 p-6 flex flex-col justify-center items-center border-b md:border-b-0 md:border-r border-indigo-100 shrink-0">
+                <div id="illustration-container" class="w-48 h-48 md:w-64 md:h-64 image-container animate-wiggle transition-transform duration-500">
+                    <!-- SVG injecté dynamiquement -->
+                </div>
+            </section>
+
+            <!-- SECTION CONTENU (DROITE) -->
+            <section class="md:w-7/12 p-6 md:p-10 flex flex-col relative overflow-y-auto">
+                
+                <!-- Zone de la blague (Setup) -->
+                <div id="joke-setup-container" class="flex-1 flex flex-col justify-center mb-6">
+                    <!-- Injecté par JS -->
+                </div>
+
+                <!-- Bouton de Révélation (Sécurité UX stricte) -->
+                <div id="reveal-action-area" class="flex justify-center my-4 shrink-0">
+                    <button id="btn-reveal" onclick="revealPunchline()" class="btn-3d btn-reveal text-white text-xl md:text-2xl font-black py-4 px-8 rounded-2xl w-full max-w-sm uppercase tracking-wide flex items-center justify-center gap-3">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        Voir la réponse
+                    </button>
+                </div>
+
+                <!-- Zone de la Chute (Vide au chargement pour sécurité) -->
+                <div id="joke-punchline-container" class="min-h-[120px] flex items-center justify-center">
+                    <!-- Injecté EXCLUSIVEMENT après le clic -->
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER / NAVIGATION -->
+        <footer class="bg-gray-100 p-4 border-t border-gray-200 shrink-0 flex flex-col gap-4">
+            
+            <!-- Contrôles Précédent / Suivant -->
+            <div class="flex justify-between items-center max-w-4xl mx-auto w-full">
+                <button onclick="prevJoke()" class="btn-3d bg-white text-indigo-900 border-2 border-indigo-200 font-bold py-3 px-6 rounded-xl flex items-center gap-2 hover:bg-indigo-50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                    Précédente
+                </button>
+                
+                <div id="progress-indicator" class="text-lg font-black text-gray-500 tracking-widest bg-gray-200 px-6 py-2 rounded-full">
+                    BLAGUE 1 / 10
+                </div>
+
+                <button onclick="nextJoke()" class="btn-3d bg-indigo-600 text-white border-2 border-indigo-700 font-bold py-3 px-6 rounded-xl flex items-center gap-2 hover:bg-indigo-500">
+                    Suivante
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Onglets numérotés -->
+            <div id="tabs-container" class="flex justify-center gap-2 flex-wrap max-w-4xl mx-auto w-full">
+                <!-- Généré par JS -->
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- BANQUE D'IMAGES SVG (Haut de gamme, vectorielles) ---
+        const SVGS = {
+            citrouille: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 15 C30 15, 10 30, 10 55 C10 85, 30 90, 50 90 C70 90, 90 85, 90 55 C90 30, 70 15, 50 15 Z" fill="#F97316"/><path d="M50 15 C40 15, 35 30, 35 55 C35 85, 40 90, 50 90 C60 90, 65 85, 65 55 C65 30, 60 15, 50 15 Z" fill="#EA580C" opacity="0.5"/><path d="M48 5 C48 10, 52 15, 50 18 L55 15 C55 10, 50 5, 48 5 Z" fill="#166534"/><polygon points="30,45 40,45 35,35" fill="#431407"/><polygon points="70,45 60,45 65,35" fill="#431407"/><path d="M35 65 Q50 80, 65 65 L60 70 Q50 75, 40 70 Z" fill="#431407"/></svg>`,
+            fantome: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M20 50 C20 20, 80 20, 80 50 L80 90 C75 85, 70 95, 65 90 C60 85, 55 95, 50 90 C45 85, 40 95, 35 90 C30 85, 25 95, 20 90 Z" fill="#FFFFFF"/><circle cx="40" cy="40" r="5" fill="#1F2937"/><circle cx="60" cy="40" r="5" fill="#1F2937"/><ellipse cx="50" cy="55" rx="6" ry="8" fill="#1F2937"/></svg>`,
+            squelette: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M30 30 C30 10, 70 10, 70 30 C70 50, 65 60, 65 60 L60 80 L40 80 L35 60 C35 60, 30 50, 30 30 Z" fill="#F3F4F6"/><circle cx="40" cy="40" r="8" fill="#111827"/><circle cx="60" cy="40" r="8" fill="#111827"/><path d="M45 55 L55 55 L50 65 Z" fill="#111827"/><line x1="40" y1="70" x2="60" y2="70" stroke="#111827" stroke-width="2"/><line x1="45" y1="65" x2="45" y2="75" stroke="#111827" stroke-width="2"/><line x1="50" y1="65" x2="50" y2="75" stroke="#111827" stroke-width="2"/><line x1="55" y1="65" x2="55" y2="75" stroke="#111827" stroke-width="2"/></svg>`,
+            chauvesouris: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 30 C45 30, 45 45, 50 45 C55 45, 55 30, 50 30 Z" fill="#1F2937"/><path d="M50 40 C30 20, 10 30, 5 50 C15 45, 25 55, 35 45 C40 55, 45 45, 50 50 C55 45, 60 55, 65 45 C75 55, 85 45, 95 50 C90 30, 70 20, 50 40 Z" fill="#374151"/><polygon points="45,35 40,25 50,30" fill="#1F2937"/><polygon points="55,35 60,25 50,30" fill="#1F2937"/><circle cx="46" cy="38" r="2" fill="#F87171"/><circle cx="54" cy="38" r="2" fill="#F87171"/></svg>`,
+            chaudron: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="40" rx="35" ry="10" fill="#374151"/><path d="M15 40 C15 80, 25 90, 50 90 C75 90, 85 80, 85 40 Z" fill="#1F2937"/><ellipse cx="50" cy="38" rx="30" ry="6" fill="#10B981"/><circle cx="40" cy="35" r="4" fill="#6EE7B7"/><circle cx="60" cy="37" r="3" fill="#6EE7B7"/><circle cx="50" cy="25" r="5" fill="#34D399" opacity="0.7"/><circle cx="35" cy="15" r="3" fill="#34D399" opacity="0.5"/><circle cx="65" cy="20" r="4" fill="#34D399" opacity="0.6"/><rect x="10" y="38" width="80" height="4" rx="2" fill="#4B5563"/></svg>`
+        };
+
+        // --- BASE DE DONNÉES DES BLAGUES ---
+        const jokesData = [
+            {
+                type: 'histoire',
+                icon: SVGS.fantome,
+                setup: "Qu’est-ce qu’un fantôme demande à un autre fantôme ?",
+                punchline: "Est-ce que tu crois aux humains ? 👻"
+            },
+            {
+                type: 'histoire',
+                icon: SVGS.chauvesouris,
+                setup: "Quels sont les bateaux préférés des vampires ?",
+                punchline: "Les vaisseaux sanguins ! 🩸"
+            },
+            {
+                type: 'dialogue',
+                icon: SVGS.citrouille,
+                setup: [
+                    { char: "La première citrouille", text: "Je n’ai vraiment pas d’idées pour mon déguisement d'Halloween cette année..." }
+                ],
+                punchline: "Creuse-toi la tête ! 🎃"
+            },
+            {
+                type: 'dialogue',
+                icon: SVGS.fantome,
+                setup: [
+                    { char: "Le chat noir", text: "Dracula, il aime tellement ça, être un vampire !" }
+                ],
+                punchline: "Ah oui, je comprends ! Il a ça dans le sang ! 🦇"
+            },
+            {
+                type: 'histoire',
+                icon: SVGS.fantome,
+                setup: "Quelle est la pierre préférée des fantômes ?",
+                punchline: "La pierre tombale ! 🪦"
+            },
+            {
+                type: 'dialogue',
+                icon: SVGS.chauvesouris,
+                setup: [
+                    { char: "Le serveur du restaurant", text: "Je vous apporte le menu, monsieur Dracula ?" }
+                ],
+                punchline: "Donnez-moi plutôt la liste de vos clients ! 🧛"
+            },
+            {
+                type: 'histoire',
+                icon: SVGS.chaudron,
+                setup: "Comment appelle-t-on un bonbon avec une béquille ?",
+                punchline: "Un suçon ! 🍭"
+            },
+            {
+                type: 'histoire',
+                icon: SVGS.citrouille,
+                setup: "Allo, Ween ? Ici Trouille...",
+                punchline: "Ça te dit, une balade au cimetière ? 🎃"
+            },
+            {
+                type: 'histoire',
+                icon: SVGS.chauvesouris,
+                setup: "Trois vampires se vantent. Le 1er a mordu un lapin, le 2e une vache. Le dernier arrive, le visage complètement couvert de sang...",
+                punchline: "« Vous voyez ce mur ? Eh bien, je ne l’ai pas vu ! » 🦇💥"
+            },
+            {
+                type: 'dialogue',
+                icon: SVGS.fantome,
+                setup: [
+                    { char: "Le premier fantôme", text: "Dis donc, il y a un mouchoir qui traîne derrière toi !" }
+                ],
+                punchline: "Mais ce n’est pas un mouchoir, c’est mon fils ! 👻"
+            },
+            {
+                type: 'histoire',
+                icon: SVGS.squelette,
+                setup: "Que dit un squelette qui a très peur ?",
+                punchline: "Os cours ! 💀"
+            },
+            {
+                type: 'histoire',
+                icon: SVGS.squelette,
+                setup: "Qu’est-ce qu’un squelette caché dans une armoire ?",
+                punchline: "Une personne qui a gagné à cache-cache ! 🏆💀"
+            },
+            {
+                type: 'dialogue',
+                icon: SVGS.chauvesouris,
+                setup: [
+                    { char: "L'ami de Dracula", text: "C’est horrible, ce vent de tempête ce soir !" }
+                ],
+                punchline: "J’ai déjà vu des vents pires ! (vampires) 🦇💨"
+            },
+            {
+                type: 'histoire',
+                icon: SVGS.fantome,
+                setup: "Qui sont les fantômes les plus élégants ?",
+                punchline: "Ceux qui sont dans de beaux draps ! 👻✨"
+            }
+        ];
+
+        // --- VARIABLES D'ÉTAT GLOBALES ---
+        let currentIndex = 0;
+        let isRevealed = false;
+        
+        // Initialisation de l'audio Tone.js (synthesizer)
+        let synth;
+        let isAudioInitialized = false;
+
+
+        // Fonction principale de rendu de la blague
+        function renderJoke() {
+            // 1. SÉCURITÉ ABSOLUE : On réinitialise l'état et on vide la zone de réponse avant de dessiner
+            isRevealed = false;
+            document.getElementById('joke-punchline-container').innerHTML = '';
+            
+            const btnReveal = document.getElementById('btn-reveal');
+            btnReveal.style.display = 'flex'; // Réafficher le bouton
+            btnReveal.classList.remove('animate-pop-in');
+            
+            const joke = jokesData[currentIndex];
+            const setupContainer = document.getElementById('joke-setup-container');
+            const illustrationContainer = document.getElementById('illustration-container');
+
+            // 2. Mise à jour de l'image
+            illustrationContainer.innerHTML = joke.icon;
+            
+            // Redémarrer l'animation de l'image
+            illustrationContainer.classList.remove('animate-wiggle');
+            void illustrationContainer.offsetWidth; // trigger reflow
+            illustrationContainer.classList.add('animate-wiggle');
+
+            // 3. Rendu HTML conditionnel selon le TYPE de blague
+            let htmlContent = '';
+
+            switch(joke.type) {
+                case 'devinette':
+                    htmlContent = `
+                        <div class="bg-indigo-50 border-2 border-indigo-200 p-6 md:p-8 rounded-3xl shadow-sm relative">
+                            <span class="absolute -top-3 left-6 bg-indigo-600 text-white rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest shadow-md">Devinette</span>
+                            <p class="text-xl md:text-3xl font-bold text-indigo-900 mb-6 leading-relaxed">${joke.setup.q}</p>
+                            <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-xl flex items-start gap-4 shadow-inner">
+                                <span class="text-3xl">💡</span>
+                                <div>
+                                    <p class="text-xs font-black text-yellow-700 uppercase tracking-widest mb-1">Indice</p>
+                                    <p class="text-lg md:text-xl text-yellow-900 font-semibold italic">« ${joke.setup.i} »</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'mmme':
+                    htmlContent = `
+                        <div class="text-center">
+                            <span class="inline-block bg-indigo-100 text-indigo-800 rounded-full px-4 py-1 text-sm font-bold mb-4 uppercase tracking-wider">Devinette Prénoms</span>
+                            <h3 class="text-2xl md:text-4xl font-bold leading-tight text-indigo-900">${joke.setup}</h3>
+                        </div>
+                    `;
+                    break;
+
+                case 'toctoc':
+                    htmlContent = `
+                        <div class="flex flex-col gap-4">
+                            <span class="inline-block bg-green-100 text-green-800 rounded-full px-4 py-1 text-sm font-bold mb-2 w-max mx-auto uppercase tracking-wider">La Porte Gringe</span>
+                            ${joke.setup.map((line, i) => `
+                                <div class="p-4 md:p-5 ${i % 2 === 0 ? 'bubble-left self-start text-indigo-900' : 'bubble-right self-end text-orange-900'} font-bold text-xl md:text-2xl shadow-sm border border-gray-100 max-w-[80%]">
+                                    ${line}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    break;
+
+                case 'dialogue':
+                    htmlContent = `
+                        <div class="flex flex-col gap-6">
+                            <span class="inline-block bg-blue-100 text-blue-800 rounded-full px-4 py-1 text-sm font-bold mb-2 w-max mx-auto uppercase tracking-wider">Dialogue Express</span>
+                            ${joke.setup.map((line, i) => `
+                                <div class="flex flex-col ${i === 0 ? 'items-start' : 'items-end'}">
+                                    <span class="text-xs font-bold text-gray-500 mb-1 ml-2">${line.char}</span>
+                                    <div class="p-4 md:p-5 ${i === 0 ? 'bg-indigo-100 text-indigo-900 bubble-left' : 'bg-orange-100 text-orange-900 bubble-right'} font-bold text-xl md:text-2xl shadow-sm border border-gray-100 max-w-[90%]">
+                                        « ${line.text} »
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    break;
+
+                case 'definition':
+                    htmlContent = `
+                        <div class="bg-yellow-50 border-l-8 border-yellow-400 p-6 md:p-8 rounded-r-2xl shadow-inner">
+                            <div class="flex items-baseline gap-3 mb-4">
+                                <h3 class="text-3xl md:text-5xl font-black text-indigo-900 font-serif-dict">${joke.setup.word}</h3>
+                                <span class="text-lg md:text-xl text-gray-500 italic font-serif-dict">${joke.setup.type}</span>
+                            </div>
+                            <p class="text-lg md:text-xl text-gray-600 border-b border-yellow-200 pb-4">${joke.setup.context}</p>
+                            <p class="text-sm font-bold text-yellow-600 mt-2 uppercase tracking-widest">Définition :</p>
+                        </div>
+                    `;
+                    break;
+
+                case 'histoire':
+                    htmlContent = `
+                        <div class="bg-gray-50 p-6 md:p-8 rounded-3xl border-2 border-dashed border-gray-300">
+                            <span class="inline-block bg-purple-100 text-purple-800 rounded-full px-4 py-1 text-sm font-bold mb-4 uppercase tracking-wider">Mini-histoire</span>
+                            <p class="text-xl md:text-2xl font-semibold leading-relaxed text-gray-800">${joke.setup}</p>
+                        </div>
+                    `;
+                    break;
+            }
+
+            setupContainer.innerHTML = htmlContent;
+
+            // 4. Mettre à jour l'interface de navigation
+            updateNavigation();
+        }
+
+
+        // Fonction déclenchée par le bouton "Voir la réponse"
+        function revealPunchline() {
+            if (isRevealed) return; // Empêche les clics multiples
+            
+            initAudio(); // Initialise l'audio si premier clic
+            playRevealSound();
+
+            isRevealed = true;
+
+            // Masquer le bouton de révélation
+            document.getElementById('btn-reveal').style.display = 'none';
+
+            // INJECTION SÉCURISÉE DE LA CHUTE DANS LE DOM
+            const punchlineContainer = document.getElementById('joke-punchline-container');
+            const joke = jokesData[currentIndex];
+
+            // On construit le HTML de la réponse avec des classes d'animation
+            const answerHTML = `
+                <div class="animate-pop-in bg-gradient-to-r from-orange-500 to-red-500 p-6 md:p-8 rounded-3xl shadow-xl w-full text-center border-4 border-white transform origin-bottom">
+                    <p class="text-3xl md:text-5xl font-black text-white drop-shadow-md leading-tight">
+                        ${joke.punchline}
+                    </p>
+                </div>
+            `;
+            
+            // Injection
+            punchlineContainer.innerHTML = answerHTML;
+            
+            // Effet visuel sur l'image
+            const img = document.getElementById('illustration-container');
+            img.style.transform = 'scale(1.2) rotate(5deg)';
+            setTimeout(() => { img.style.transform = ''; }, 500);
+        }
+
+        // Navigation Suivante
+        function nextJoke() {
+            if (currentIndex < jokesData.length - 1) {
+                currentIndex++;
+                playClickSound();
+                renderJoke();
+            }
+        }
+
+        // Navigation Précédente
+        function prevJoke() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                playClickSound();
+                renderJoke();
+            }
+        }
+
+        // Aller à une blague spécifique via onglet
+        function goToJoke(index) {
+            if (currentIndex !== index) {
+                currentIndex = index;
+                playClickSound();
+                renderJoke();
+            }
+        }
+
+        // Mise à jour de la barre d'outils bas (compteur et onglets)
+        function updateNavigation() {
+            // Texte compteur
+            document.getElementById('progress-indicator').innerText = `BLAGUE ${currentIndex + 1} / ${jokesData.length}`;
+
+            // Onglets
+            const tabsContainer = document.getElementById('tabs-container');
+            let tabsHTML = '';
+            for(let i = 0; i < jokesData.length; i++) {
+                const isActive = (i === currentIndex);
+                const btnClass = isActive ? 'tab-active shadow-md' : 'tab-inactive border-b-4';
+                tabsHTML += `
+                    <button onclick="goToJoke(${i})" class="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-black transition-all duration-200 border-2 ${btnClass}">
+                        ${i + 1}
+                    </button>
+                `;
+            }
+            tabsContainer.innerHTML = tabsHTML;
+        }
+
+        
+        function initAudio() {
+            if(!isAudioInitialized) {
+                // Synthé basique et amusant pour les effets
+                synth = new Tone.Synth({
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.05, decay: 0.1, sustain: 0.3, release: 1 }
+                }).toDestination();
+                isAudioInitialized = true;
+            }
+        }
+
+        function playClickSound() {
+            initAudio();
+            if(Tone.context.state !== 'running') Tone.context.resume();
+            synth.triggerAttackRelease("C5", "32n");
+        }
+
+        function playRevealSound() {
+            if(Tone.context.state !== 'running') Tone.context.resume();
+            // Petit arpège humoristique de révélation (Tada!)
+            const now = Tone.now();
+            synth.triggerAttackRelease("C4", "8n", now);
+            synth.triggerAttackRelease("E4", "8n", now + 0.1);
+            synth.triggerAttackRelease("G4", "8n", now + 0.2);
+            synth.triggerAttackRelease("C5", "4n", now + 0.3);
+        }
+
+        // DÉMARRAGE DE L'APPLICATION
+        window.onload = () => {
+            renderJoke();
+        };
+
+    </script>
+</body>
+</html>
